@@ -9,6 +9,7 @@ from fastapi import FastAPI
 
 import db
 from ai import ask_ai
+from exchange import exchange_text
 from places import load_places, search
 from prompts import build_prompt_v3
 from weather import weather_text
@@ -63,6 +64,8 @@ def webhook(body: dict):
             output = "\n".join(f"{eaten_at} {menu}" for eaten_at, menu in meals)
     elif text.startswith("/"):
         output = "모르는 명령이에요. /help 를 보내 보세요."
+    elif "환율" in text:  # "오늘 환율이 어떻게 돼?" 같은 말은 AI 없이 바로 환율로 답한다
+        output = exchange_text()
     else:
         # 명령이 아닌 말은 AI가 답한다. 목록에서 먼저 찾아 주고, 그 안에서만 고르게 한다
         found = search(text, places)
